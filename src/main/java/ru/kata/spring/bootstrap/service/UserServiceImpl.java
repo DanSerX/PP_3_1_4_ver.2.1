@@ -7,15 +7,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.kata.spring.bootstrap.model.Role;
 import ru.kata.spring.bootstrap.model.User;
 import ru.kata.spring.bootstrap.repository.UserRepository;
 
 import java.util.Optional;
-import java.util.Set;
 
 @Service
-@Transactional
 public class UserServiceImpl implements UserService, UserDetailsService {
     private final UserRepository userRepository;
     private BCryptPasswordEncoder passwordEncoder;
@@ -26,6 +23,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
+    @Transactional
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email);
         Hibernate.initialize(user.getRoles());
@@ -33,6 +31,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
+    @Transactional
     public void createUser(User user) {
         if (userRepository.findByEmail(user.getEmail()) == null) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -47,6 +46,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
+    @Transactional
     public void updateUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRoles(user.getRoles());
@@ -54,6 +54,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
+    @Transactional
     public void deleteUser(User user) {
         userRepository.delete(user);
     }
